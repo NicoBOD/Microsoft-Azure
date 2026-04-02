@@ -32,6 +32,53 @@ Avant de lancer le déploiement, vous devez disposer de :
 ## 🚀 Guide de déploiement
 
 ### 1. Cloner le dépôt
-```bash
-git clone [https://github.com/NicoBOB/Microsoft-Azure.git](https://github.com/NicoBOB/Microsoft-Azure.git)
+` ` `bash
+git clone https://github.com/NicoBOB/Microsoft-Azure.git
 cd Microsoft-Azure
+` ` `
+
+### 2. S'authentifier sur Azure
+` ` `bash
+az login
+` ` `
+*(Si vous avez plusieurs abonnements, sélectionnez le bon avec `az account set --subscription <ID>`)*
+
+### 3. Lancer le déploiement
+Exécutez la commande suivante en remplaçant `<VOTRE_GROUPE_DE_RESSOURCES>` par le nom de votre groupe de ressources Azure. Le script lira automatiquement votre clé publique SSH locale.
+
+` ` `bash
+az deployment group create \
+  --resource-group <VOTRE_GROUPE_DE_RESSOURCES> \
+  --template-file main.bicep \
+  --parameters adminPublicKey="$(cat ~/.ssh/id_rsa.pub)"
+` ` `
+
+*Note : Le paramètre optionnel `vmSku` peut être modifié à la volée si la taille `Standard_D2s_v3` n'est pas disponible dans votre région (ex: `--parameters vmSku="Standard_B2s"`).*
+
+## 🔌 Utilisation et Tests
+
+Une fois le déploiement terminé avec succès (`"provisioningState": "Succeeded"`) :
+
+1. **Accès Web :** Récupérez l'adresse IP publique de votre Load Balancer dans le portail Azure et ouvrez-la dans votre navigateur. Vous devriez voir la page d'accueil Nginx affichant le nom de l'instance.
+2. **Accès SSH (Administration) :** Pour vous connecter à une instance spécifique derrière le Load Balancer, vous devez utiliser le port NAT attribué dynamiquement (ex: 50000, 50001, etc.).
+   ` ` `bash
+   ssh azureuser@<IP_PUBLIQUE_DU_LB> -p 50000
+   ` ` `
+3. **Test d'Auto-scaling :** Connectez-vous en SSH, installez l'outil `stress` (`sudo apt-get install stress`) et chargez le CPU (`stress --cpu 4 --timeout 600`). Observez la création automatique de nouvelles instances depuis le portail Azure.
+
+## 🧹 Nettoyage
+
+Pour éviter des frais inutiles, pensez à supprimer les ressources une fois vos tests terminés. Vous pouvez supprimer entièrement le groupe de ressources :
+
+` ` `bash
+az group delete --name <VOTRE_GROUPE_DE_RESSOURCES> --yes --no-wait
+` ` `
+
+## 👨‍💻 Auteur
+
+**Nicolas BODAINE**
+* GitHub : [@NicoBOB](https://github.com/NicoBOB)
+
+## 📄 Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
