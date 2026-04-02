@@ -81,4 +81,4 @@ az group delete --name <VOTRE_GROUPE_DE_RESSOURCES> --yes --no-wait
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous licence MIT
