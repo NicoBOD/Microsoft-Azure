@@ -176,7 +176,7 @@ resource vmss 'Microsoft.Compute/virtualMachineScaleSets@2023-03-01' = {
   sku: {
     name: vmSku
     tier: 'Standard'
-    capacity: 2 // Modification : 2 instances par défaut au déploiement
+    capacity: 2 // 2 instances par défaut au déploiement
   }
   properties: {
     overprovision: false
@@ -260,9 +260,9 @@ resource autoscale 'Microsoft.Insights/autoscaleSettings@2022-10-01' = {
       {
         name: 'AutoCreatedScaleCondition'
         capacity: {
-          minimum: '2' // Modification demandée
-          maximum: '4' // Modification demandée
-          default: '2' // Modification demandée
+          minimum: '2'
+          maximum: '4'
+          default: '2'
         }
         rules: [
           {
